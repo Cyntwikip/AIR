@@ -18,7 +18,15 @@ logger.setLevel(logging.ERROR)
 
 # adding __name__ fixes 'no css' issue
 # app = dash.Dash(__name__, static_folder='assets/')
-app = dash.Dash()
+# app = dash.Dash(static_folder='assets/')
+
+# External CSS
+external_stylesheets=["assets/plotly_dash.css", "assets/bootstrap.min.css", "assets/custom.css"]
+
+# Initializing the Default Constructor of Dash Framework and the Application
+app = dash.Dash(__name__,  external_stylesheets=external_stylesheets)
+
+# app = dash.Dash()
 server = app.server
 
 # read the GDP csv
