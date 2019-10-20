@@ -8,7 +8,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-from dash.dependencies import Input, Output, State, Event
+from dash.dependencies import Input, Output, State
 from IPython.display import display, IFrame, HTML
 
 # turn off web logs
@@ -17,16 +17,16 @@ logger = logging.getLogger('werkzeug')  # WSGI - web server gateway interface
 logger.setLevel(logging.ERROR)
 
 # adding __name__ fixes 'no css' issue
-app = dash.Dash(__name__, static_folder='assets/')
-# app = dash.Dash()
+# app = dash.Dash(__name__, static_folder='assets/')
+app = dash.Dash()
 server = app.server
 
 # read the GDP csv
-df = pd.read_csv('dataset.csv')
+df = pd.read_csv('dataset_pred.csv')
 df.set_index('country_code', inplace=True)
 
 min_year = 2012
-max_year = 2017
+max_year = 2020
 
 
 def get_map_figure(year, colorstyle=0):
@@ -50,10 +50,6 @@ def get_map_figure(year, colorstyle=0):
         Return a map figure
     '''
     if colorstyle == 0:
-#         colorscale = [[0, "rgb(103, 11, 99)"], [0.66, "rgb(91, 11, 239)"],
-#                       [0.78, "rgb(11, 55, 239)"], [0.86, "rgb(11, 95, 239)"],
-#                       [0.92, "rgb(232, 239, 11)"], [0.96, "rgb(239, 209, 11)"],
-#                       [0.99, "rgb(239, 103, 11)"], [1, "rgb(239, 11, 11)"]]
         colorscale = [[0, "rgb(178, 34, 34)"], [1, "rgb(225, 215, 0)"]]
     elif colorstyle == 1:
         colorscale = [[1-(1/10)*10**(1), "rgb(103, 11, 99)"],
@@ -78,7 +74,6 @@ def get_map_figure(year, colorstyle=0):
             )),
         colorbar=dict(
             autotick=False,
-            #tickprefix='$',
             lenmode='fraction',
             len=0.8,
             thicknessmode='pixels',
@@ -130,14 +125,14 @@ def create_slider(id, value):
         max=max_year,
         step=1,
         value=value,
-        marks={str(i): i for i in range(2012, 2017)},
+        marks={str(i): i for i in range(min_year, max_year)},
         className='year-slider'
     )
 
 # resets the callbacks
 app.callback_map = {} 
 # sets the title
-app.title = 'Global Inequality Visualization'
+app.title = 'A.I.R.'
 # html content
 app.layout = html.Div([
     html.Div([
@@ -147,20 +142,23 @@ app.layout = html.Div([
                      Asian Institute of Management'),
         html.Br(),
         html.Div([
-            html.Span(children='''Project AIR is an Artificial Intelligence and Machine Learning platform that allows you to easily visualize air quality utilizing both satellite data and supplementary data from reliable sources enabling users to predict, understand, and decide on actions.'''),
-            html.H3(children="Problem and Opportunity"),
-            html.Span(children='''Seven million people die pre-mature deaths due to pulmonary and respiratory diseases, lung cancer, and other airborne diseases. This is due to the negative impacts of both outdoor and household air pollution.  
- 
-Air pollution does not only impact health but also the overall wellbeing and the global economy. In fact, USD 5-trillion are wasted on welfare costs due to air pollution and around USD 225-billion are income that is lost due to poor air quality. 
- 
-Air Pollution curtails lives, contributes to the climate crisis, and disrupts businesses.
-
-But why is it relevant for us to take action? 
-Air quality issues are transboundary – aerosols can travel fast and can cross borders, therefore the problem becomes harder to control and risk countries due to the differences in country policies, programs, and evaluation measures. 
-Air quality is an indicator of governance and is part of the UN SDGs – countries have pledged to involve themselves in taking actions to achieve the 17 UN SDGs which also focused on air pollution 
-Air quality affects a person and its society’s health – one of the leading causes of death every year is air pollution of which 9 out of 10 people breathe polluted air. The cost of mitigating the risk and addressing health problems are greater. 
-Air quality affects businesses – air pollution damages forests, bodies of water, crops, and animal populations which are main sources of businesses for many.'''),
-
+            html.Span(children='''Project AIR is an Artificial Intelligence and Machine Learning platform that allows you to 
+            easily visualize air quality utilizing both satellite data and supplementary data from reliable sources 
+            enabling users to predict, understand, and decide on actions.'''),
+            html.H5(children="Problem and Opportunity"),
+            html.Span(children='''Seven million people die pre-mature deaths due to pulmonary and respiratory diseases, 
+            lung cancer, and other airborne diseases. This is due to the negative impacts of both outdoor and household 
+            air pollution. Air pollution does not only impact health but also the overall wellbeing and the global economy. 
+            In fact, USD 5-trillion are wasted on welfare costs due to air pollution and around USD 225-billion are income 
+            that is lost due to poor air quality. Air Pollution curtails lives, contributes to the climate crisis, and 
+            disrupts businesses. But why is it relevant for us to take action? Air quality issues are transboundary – aerosols 
+            can travel fast and can cross borders, therefore the problem becomes harder to control and risk countries due to 
+            the differences in country policies, programs, and evaluation measures. Air quality is an indicator of governance 
+            and is part of the UN SDGs – countries have pledged to involve themselves in taking actions to achieve the 17 UN 
+            SDGs which also focused on air pollution. Air quality affects a person and its society’s health – one of the leading 
+            causes of death every year is air pollution of which 9 out of 10 people breathe polluted air. The cost of mitigating 
+            the risk and addressing health problems are greater. Air quality affects businesses – air pollution damages forests, 
+            bodies of water, crops, and animal populations which are main sources of businesses for many.'''),
         
         ], id="intro"),
     ], id='intro-section'),
@@ -280,4 +278,4 @@ if __name__ == '__main__':
     app.css.config.serve_locally = True
     app.scripts.config.serve_locally = True
     port = int(os.environ.get('PORT', 5000))
-    app.run_server(port=port, debug=True)
+    app.run_server(port=port, debug=False)
