@@ -17,8 +17,8 @@ logger = logging.getLogger('werkzeug')  # WSGI - web server gateway interface
 logger.setLevel(logging.ERROR)
 
 # adding __name__ fixes 'no css' issue
-# app = dash.Dash(__name__, static_folder='assets/')
-app = dash.Dash()
+app = dash.Dash(__name__, static_folder='assets/')
+# app = dash.Dash()
 server = app.server
 
 # read the GDP csv
